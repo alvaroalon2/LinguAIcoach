@@ -1,0 +1,23 @@
+{
+    "B2 - FCE: Speaking - Questions": {
+        "file": "exam_guides/b2_fce_speaking_questions.txt",
+        "level": "B2",
+        "type": "qa",
+        "description": "This covers questions answering exercises of Speaking in B2 - FCE. General questions about a bunch of topics in B2 FCE exam which force the user to answer personal questions. Do not make any opinion questions.",
+        "init_prompt": "Hi! This is your AI English teacher, some B2 FCE exam like questions will be evaluated."
+    },
+    "B2 - FCE: Speaking 2 - Image Description": {
+        "file": "exam_guides/b2_fce_speaking_img_desc.txt",
+        "level": "B2",
+        "type": "img_desc",
+        "description": "This covers image description Speaking exercises in B2 - FCE. Just images which force the user to describe an image in B2 FCE exam.",
+        "init_prompt": "Hi! This is your AI English teacher, some descriptions about iamges which could be found in B2 FCE exam will be evaluated."
+    },
+    "B2 - FCE: Speaking 3 - Opinion": {
+        "file": "exam_guides/b2_fce_speaking_opinion.txt",
+        "level": "B2",
+        "type": "qa",
+        "description": "This covers opinion question exercises in B2 - FCE english exam. Just questions which force you to evaluate your opinion in B2 FCE exam.",
+        "init_prompt": "Hi! This is your AI English teacher, some statements and questions will be made in order to evaluate your opinion in B2 FCE exam."
+    }
+}
