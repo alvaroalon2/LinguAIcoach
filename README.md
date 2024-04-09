@@ -2,6 +2,7 @@
 
 <img src="./docs/images/header.png" alt="LingAIcoach" width="1000" style="display: block; margin: 0 auto"/>
 
+Yo can access to the App through: [LinguAIcoach Web](https://linguaicoach.streamlit.app/)
 
 ## Description
 LinguAIcoach is a project that helps to improve your English with the assistance of AI. It provides tools for practicing, testing, and learning English using AI chatbots and other language processing technologies. The LinguAIcoach project utilizes DALL-E, GPT-4V, Whisper and GPT models to enhance English language learning in a multimodal way. The project offers a variety of exercises to enhance your English skills. The exercises cover different types of exams.
