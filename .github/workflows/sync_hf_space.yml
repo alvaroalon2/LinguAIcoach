@@ -19,6 +19,14 @@ jobs:
         with:
           filesizelimit: 10MB # so we can sync to HF Spaces
       
+      - name: config git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      
+      - name: Pull from hub
+        run: git pull https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
+      
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -38,9 +46,6 @@ jobs:
             HF_USERNAME: "alvaroalon2"
             SPACE_NAME: "LinguAIcoach"
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git pull https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
           git add README.md requeriments.txt
           git commit -m "Update HF README adding model card, added requirements.txt"
           git push https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
