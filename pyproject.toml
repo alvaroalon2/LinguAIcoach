@@ -11,7 +11,7 @@ repository = "https://github.com/alvaroalon2/LinguAIcoach"
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     "Operating System :: Unix",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.11",
 ]
 
 packages = [{ include = "src" }]
@@ -21,7 +21,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 langchain = "^0.1.12"
 langchain-openai = "^0.0.6"
 openai = "^1.12.0"
