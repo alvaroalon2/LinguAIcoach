@@ -1,19 +1,3 @@
-<!--
----
-title: LinguAIcoach
-emoji: 💬​
-colorFrom: blue
-colorTo: red
-sdk: streamlit
-sdk_version: 1.31.1
-python_version: 3.12
-app_file: src/main.py
-pinned: true
-tags: [academic, english, learning, gpt, multimodal, whisper, gpt4-vision, dall-e, chatbot]
-license: cc-by-nd-4.0
----
--->
-
 # LinguAIcoach
 
 <img src="./docs/images/header.png" alt="LingAIcoach" width="1000" style="display: block; margin: 0 auto"/>
@@ -75,3 +59,17 @@ This project is licensed under the CC-BY-NC-ND-4.0 license. See the [LICENSE.md]
 - New kind of exercises.
 - Guide content generation using examples extracted from real exams.
 - Testing
+
+---
+title: LinguAIcoach
+emoji: 💬​
+colorFrom: blue
+colorTo: red
+sdk: streamlit
+sdk_version: 1.31.1
+python_version: 3.12
+app_file: src/main.py
+pinned: true
+tags: [academic, english, learning, gpt, multimodal, whisper, gpt4-vision, dall-e, chatbot]
+license: cc-by-nd-4.0
+---
