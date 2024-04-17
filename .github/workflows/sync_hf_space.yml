@@ -22,20 +22,7 @@ jobs:
           filesizelimit: 10MB # so we can sync to HF Spaces
       
       - name: Add HF model card
-        run: |
-          echo '---
-          title: LinguAIcoach
-          emoji: 💬
-          colorFrom: blue
-          colorTo: red
-          sdk: streamlit
-          sdk_version: 1.31.1
-          python_version: 3.12
-          app_file: src/main.py
-          pinned: true
-          tags: [academic, english, learning, gpt, multimodal, whisper, gpt4-vision, dall-e, chatbot]
-          license: cc-by-nd-4.0
-          ---' | cat - README.md > temp && mv temp README.md
+        run: echo $(cat model_card.md) | cat - README.md > temp && mv temp README.md
 
       - name: Push to hub
         env:
