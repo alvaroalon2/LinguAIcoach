@@ -1,3 +1,4 @@
+
 # LinguAIcoach
 
 <img src="./docs/images/header.png" alt="LingAIcoach" width="1000" style="display: block; margin: 0 auto"/>
