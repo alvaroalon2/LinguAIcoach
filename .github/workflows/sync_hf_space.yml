@@ -2,8 +2,6 @@ name: Sync to Hugging Face hub
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
   workflow_dispatch:
 
@@ -21,12 +19,19 @@ jobs:
         with:
           filesizelimit: 10MB # so we can sync to HF Spaces
       
-      - name: Add HF model card
-        run: echo $(cat model_card.md) | cat - README.md > temp && mv temp README.md
-
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: "alvaroalon2"
           SPACE_NAME: "LinguAIcoach"
         run: git push https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME main
+      
+      - name: Add HF model card
+        run: echo $(cat model_card.md) | cat - README.md > temp && mv temp README.md
+
+      - name: Update HF README
+        env:
+            HF_TOKEN: ${{ secrets.HF_TOKEN }}
+            HF_USERNAME: "alvaroalon2"
+            SPACE_NAME: "LinguAIcoach"
+        run: git add README.md && git commit -m "Update HF README" && git push https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME
