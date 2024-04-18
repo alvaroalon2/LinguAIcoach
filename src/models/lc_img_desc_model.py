@@ -1,11 +1,12 @@
 from operator import itemgetter
-from typing import Any, Dict, override
+from typing import Any, Dict
 
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field, SecretStr
 from langchain_openai import ChatOpenAI
+from typing_extensions import override
 
 from src.models.lc_qa_model import EvaluationChatModelQA
 
