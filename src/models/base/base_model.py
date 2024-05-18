@@ -10,11 +10,28 @@ from langchain_openai import ChatOpenAI
 
 class ChainGenerator(ABC):
 
-    def __init__(self, openai_api_key: SecretStr, chat_temperature: float = 0.3) -> None:
+    def __init__(
+        self,
+        openai_api_key: SecretStr,
+        chat_temperature: float = 0.3,
+        chat_model: str = "gpt-3.5-turbo",
+    ) -> None:
+        """
+        Initializes the class with the given parameters.
+
+        Args:
+            openai_api_key (SecretStr): The API key for OpenAI.
+            chat_temperature (float, optional): The temperature to use for chat. Defaults to 0.3.
+            chat_model (str, optional): The model to use for chat. Defaults to "gpt-3.5-turbo".
+
+        Returns:
+            None
+
+        """
         self.openai_api_key = openai_api_key
         self.chat_temperature = chat_temperature
 
-        self._initialize_chat_llm()
+        self._initialize_chat_llm(chat_model)
 
     @abstractmethod
     def _get_system_prompt(self) -> ChatPromptTemplate:
@@ -32,12 +49,12 @@ class ChainGenerator(ABC):
             RunnableSequence: Chain.
         """
 
-    def _initialize_chat_llm(self) -> None:
+    def _initialize_chat_llm(self, chat_model: str) -> None:
         """Initializes the ChatOpenAI language model."""
         self.chat_llm = ChatOpenAI(
             api_key=self.openai_api_key,
             temperature=self.chat_temperature,
-            model="gpt-3.5-turbo-1106",
+            model=chat_model,
         )
 
 
@@ -49,6 +66,11 @@ class EvaluationChatModel(ChainGenerator):
 
         Args:
             level (str): Level of the exam.
+            openai_api_key (SecretStr): OpenAI API key.
+            chat_temperature (float): Temperature for the chat model.
+
+        Returns:
+            None
         """
         super().__init__(openai_api_key=openai_api_key, chat_temperature=chat_temperature)
         self.level = level

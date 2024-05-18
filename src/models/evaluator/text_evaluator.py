@@ -9,8 +9,7 @@ from langchain.prompts import ChatPromptTemplate, PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field, SecretStr
 from langchain_core.runnables import Runnable, RunnableConfig
 from langchain_openai import ChatOpenAI
-
-from src.models.lc_base_model import EvaluationChatModel
+from src.models.base.base_model import EvaluationChatModel
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +59,14 @@ class EvaluationChatModelQA(EvaluationChatModel):
             default="",
         )
 
-    def __init__(self, level: str, openai_api_key: SecretStr, chat_temperature: float = 0.3) -> None:
+    def __init__(
+        self,
+        level: str,
+        openai_api_key: SecretStr,
+        eval_model: str = "gpt-3.5-turbo",
+        chat_temperature: float = 0.3,
+        eval_temperature: float = 0.3,
+    ) -> None:
         """
         Initializes the class with the given parameters.
 
@@ -68,13 +74,16 @@ class EvaluationChatModelQA(EvaluationChatModel):
             exam_prompt (str): The prompt for the exam.
             level (str): The level of the exam.
             openai_api_key (SecretStr): The API key for OpenAI.
+            eval_model (str, optional): The model to use for evaluation. Defaults to "gpt-3.5-turbo".
+            chat_temperature (float, optional): The temperature to use for chat. Defaults to 0.3.
+            eval_temperature (float, optional): The temperature to use for evaluation. Defaults to 0.3.
 
         Returns:
             None
         """
         super().__init__(level=level, openai_api_key=openai_api_key, chat_temperature=chat_temperature)
 
-        self.checker_llm = ChatOpenAI(api_key=self.openai_api_key, temperature=0, model="gpt-3.5-turbo")
+        self.checker_llm = ChatOpenAI(api_key=self.openai_api_key, temperature=eval_temperature, model=eval_model)
         self.prompt = self._get_system_prompt()
 
         self.chain = self._create_chain()
