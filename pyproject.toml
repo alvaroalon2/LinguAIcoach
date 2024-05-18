@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "LinguAIcoach"
-version = "0.1.0"
+version = "0.1.1"
 description = "Help to improve your English with AI"
 authors = ["alvaroalon2"]
 readme = "README.md"

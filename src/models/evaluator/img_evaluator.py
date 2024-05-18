@@ -6,9 +6,8 @@ from langchain.schema import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field, SecretStr
 from langchain_openai import ChatOpenAI
+from src.models.evaluator.text_evaluator import EvaluationChatModelQA
 from typing_extensions import override
-
-from src.models.lc_qa_model import EvaluationChatModelQA
 
 
 class EvaluationChatModelImg(EvaluationChatModelQA):
@@ -29,8 +28,30 @@ class EvaluationChatModelImg(EvaluationChatModelQA):
             description="Example of a response based on the AI image description following the given guidelines (just if there is)",
         )
 
-    def __init__(self, level: str, openai_api_key: SecretStr, chat_temperature: float = 0.3) -> None:
-        self.gpt4v = ChatOpenAI(temperature=0.3, model="gpt-4-vision-preview", max_tokens=1024, api_key=openai_api_key)
+    def __init__(
+        self,
+        eval_model: str,
+        level: str,
+        openai_api_key: SecretStr,
+        chat_temperature: float = 0.3,
+        eval_temperature: float = 0.3,
+    ) -> None:
+        """
+        Initializes the class with the given parameters.
+
+        Args:
+            eval_model (str): The vision model to use for image description.
+            level (str): The level of the exam.
+            openai_api_key (SecretStr): The API key for OpenAI.
+            chat_temperature (float, optional): The temperature to use for chat. Defaults to 0.3.
+            eval_temperature (float, optional): The temperature to use for image model. Defaults to 0.3.
+
+        Returns:
+            None
+        """
+        self.vision_model = ChatOpenAI(
+            temperature=eval_temperature, model=eval_model, max_tokens=1024, api_key=openai_api_key
+        )
         super().__init__(level, openai_api_key=openai_api_key, chat_temperature=chat_temperature)
 
     def _get_system_prompt(self) -> ChatPromptTemplate:
@@ -74,7 +95,7 @@ class EvaluationChatModelImg(EvaluationChatModelQA):
 
         multi_chain_dict.update(
             {
-                "ai_img_desc": itemgetter("image_url") | self.gpt4v | StrOutputParser(),
+                "ai_img_desc": itemgetter("image_url") | self.vision_model | StrOutputParser(),
                 "base_response": itemgetter("base_response"),
             }
         )
@@ -93,7 +114,7 @@ class EvaluationChatModelImg(EvaluationChatModelQA):
             Dict: The output of the prediction.
         """
         input_model = self.Input(user_desc=user_desc, image_url=image_url)
-        gpt4v_input = [
+        vision_model_input = [
             HumanMessage(
                 content=[
                     {"type": "text", "text": "What is this image showing?"},
@@ -105,6 +126,6 @@ class EvaluationChatModelImg(EvaluationChatModelQA):
             )
         ]
         result = self.chain.invoke(
-            {"base_response": input_model.user_desc, "image_url": gpt4v_input}, config=self.config
+            {"base_response": input_model.user_desc, "image_url": vision_model_input}, config=self.config
         )
         return result.dict(by_alias=True)

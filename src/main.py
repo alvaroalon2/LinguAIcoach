@@ -80,11 +80,16 @@ if not st.session_state.openai_api_key:
     st.info("Please add your OpenAI API key to continue.")
     st.stop()
 
+eval_model = config["EVALUATION_MODEL"][st.session_state["exam_type"]]["model"]
+eval_temperature = config["EVALUATION_MODEL"][st.session_state["exam_type"]]["temperature"]
+
 model_eval = model_factory.create_model(
     model_class=st.session_state["exam_type"],
     openai_api_key=st.session_state.openai_api_key,
     level=level,
     chat_temperature=config["OPENAI_TEMPERATURE_EVAL"],
+    eval_model=eval_model,
+    eval_temperature=eval_temperature,
 )
 
 generator = gen_factory.create_model(
@@ -94,6 +99,10 @@ generator = gen_factory.create_model(
     level=level,
     description=exam_desc,
     chat_temperature=config["OPENAI_TEMPERATURE_GEN"],
+    n_messages_memory=config["N_MAX_HISTORY"],
+    chat_model=config["MODEL_TEXT_GEN"],
+    prompt_model=config["MODEL_IMG_PROMPT"],
+    prompt_model_temperature=config["IMG_PROMPT_TEMPERATURE"],
     history_chat=[
         AIMessage(content=f"Previous question (Don't repeat): {q.content}")
         for q in st.session_state["question"][-config["N_MAX_HISTORY"] :]
