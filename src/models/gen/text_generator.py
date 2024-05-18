@@ -3,18 +3,16 @@ from typing import Any, List, Type
 
 from langchain.memory import ChatMessageHistory, ConversationBufferWindowMemory
 from langchain.output_parsers import PydanticOutputParser
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder, PromptTemplate
-from langchain.schema import AIMessage, HumanMessage
-from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.schema import BaseMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field, SecretStr
 from langchain_core.runnables import Runnable, RunnableLambda, RunnablePassthrough
-from langchain_openai import OpenAI
-
-from src.models.lc_base_model import ContentGenerator
+from src.models.base.base_model import ContentGenerator
 
 
 class QuestionGenerator(ContentGenerator):
+
     class Question(BaseModel):
         question: str = Field(alias="Question", description="A question based on the given guidelines")
 
@@ -23,9 +21,11 @@ class QuestionGenerator(ContentGenerator):
         exam_prompt: str,
         level: str,
         description: str,
-        history_chat: List[HumanMessage | AIMessage],
+        history_chat: List[BaseMessage],
         openai_api_key: SecretStr,
         chat_temperature: float = 0.3,
+        n_messages_memory: int = 20,
+        chat_model: str = "gpt-3.5-turbo",
     ) -> None:
         """
         Initializes the object with the given exam prompt, level, description, history chat, and OpenAI API key.
@@ -36,16 +36,18 @@ class QuestionGenerator(ContentGenerator):
             description (str): The description of the exam.
             history_chat (List[HumanMessage | AIMessage]): List of chat messages from history.
             openai_api_key (SecretStr): The API key for OpenAI.
+            chat_temperature (float, optional): The temperature to use for chat. Defaults to 0.3.
+            n_messages_memory (int, optional): The number of messages to keep in memory. Defaults to 20.
 
         Returns:
             None
         """
-        super().__init__(openai_api_key=openai_api_key, chat_temperature=chat_temperature)
+        super().__init__(openai_api_key=openai_api_key, chat_temperature=chat_temperature, chat_model=chat_model)
         self.level = level
         self.exam_prompt = exam_prompt
         self.description = description
         self.memory = ConversationBufferWindowMemory(
-            chat_memory=ChatMessageHistory(messages=history_chat), return_messages=True, k=20
+            chat_memory=ChatMessageHistory(messages=history_chat), return_messages=True, k=n_messages_memory
         )
         self.chain = self._create_chain()
 
@@ -126,80 +128,3 @@ class QuestionGenerator(ContentGenerator):
         self.memory.chat_memory.add_ai_message(response)
 
         return response
-
-
-class ImgGenerator(ContentGenerator):
-
-    def __init__(
-        self,
-        exam_prompt: str,
-        level: str,
-        description: str,
-        openai_api_key: SecretStr,
-        chat_temperature: float = 0.3,
-        img_size: str = "256x256",
-    ) -> None:
-        """
-        Initializes the class with the exam prompt, level, description, OpenAI API key, and optional image size.
-
-        Parameters:
-            exam_prompt (str): The prompt for the exam.
-            level (str): The level of the exam.
-            description (str): Description of the exam.
-            openai_api_key (SecretStr): The OpenAI API key.
-            img_size (str, optional): The size of the image. Default is "256x256".
-
-        Returns:
-            None
-        """
-        super().__init__(openai_api_key, chat_temperature)
-        self.level = level
-        self.exam_prompt = exam_prompt
-        self.description = description
-        self.dalle = DallEAPIWrapper(size=img_size, api_key=self.openai_api_key.get_secret_value())  # type: ignore[call-arg]
-        self.chain = self._create_chain()
-
-    def _get_system_prompt(self) -> ChatPromptTemplate:
-
-        return ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    f"""You will generate a short image description (one paragraph max)
-                        which will be later used for generating an image taking into
-                        account that this images will be used for evaluating the
-                        user how well can describe this image in the context of
-                        an {self.level} Speaking English exam.
-
-                        {self.description}
-
-                        Topics about image descriptions which can appear:
-                        {self.exam_prompt}
-                        """,
-                ),
-                ("human", "{base_input}"),
-            ]
-        )
-
-    def _create_chain(self) -> Runnable[Any, Any]:
-
-        img_prompt = PromptTemplate(
-            input_variables=["image_desc"],
-            template="""You will now act as a prompt generator. I will describe an image to you, and you will create a prompt
-            that could be used for image-generation. The style must be realistic:
-            Description: {image_desc}""",
-        )
-
-        return (
-            {"image_desc": self._get_system_prompt() | self.chat_llm | StrOutputParser()}
-            | img_prompt
-            | OpenAI(temperature=0.7, api_key=self.openai_api_key)
-            | StrOutputParser()
-        )
-
-    def generate(self) -> str:
-        """
-        Generate function to create and return an image URL based on input parameters.
-        """
-        img_url = self.dalle.run(self.chain.invoke({"base_input": "Generate image description"})[:999])
-        return img_url

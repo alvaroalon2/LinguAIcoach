@@ -3,7 +3,21 @@
 
 <img src="./docs/images/header.png" alt="LingAIcoach" width="1000" style="display: block; margin: 0 auto"/>
 
-Yo can access to the App through: [LinguAIcoach Web](https://linguaicoach.streamlit.app/)
+You can access to the App through Streamlit share: [LinguAIcoach Web](https://linguaicoach.streamlit.app/) or through Huggingface Spaces: [LinguAIcoach](https://huggingface.co/spaces/alvaroalon2/linguAIcoach)
+
+## Table of Contents
+
+- [Recent Activities](#recent-activities)
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Authors](#authors)
+- [Next Steps](#next-steps)
+
+## Recent Activities
+- Parameterized models, now is possible to make use of new OpenAI models like gpt-4o.
 
 ## Description
 LinguAIcoach is a project that helps to improve your English with the assistance of AI. It provides tools for practicing, testing, and learning English using AI chatbots and other language processing technologies. The LinguAIcoach project utilizes DALL-E, GPT-4V, Whisper and GPT models to enhance English language learning in a multimodal way. The project offers a variety of exercises to enhance your English skills. The exercises cover different types of exams.
